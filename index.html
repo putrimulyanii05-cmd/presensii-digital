@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Presensi Kelas - QR Code</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #25d366;
+            --primary-dark: #128c7e;
+            --secondary: #667eea;
+            --secondary-dark: #764ba2;
+            --bg-1: #0f0c29;
+            --bg-2: #302b63;
+            --bg-3: #24243e;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-muted: rgba(255, 255, 255, 0.6);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background orbs */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
+        }
+        body::before {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, #25d366, transparent);
+            top: -150px; left: -150px;
+            animation: float 12s ease-in-out infinite;
+        }
+        body::after {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, #667eea, transparent);
+            bottom: -200px; right: -200px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, 30px) scale(1.1); }
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 28px 22px 22px;
+            border: 1px solid var(--glass-border);
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 1;
+            animation: containerIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes containerIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .icon-circle {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 14px;
+            font-size: 26px; color: white;
+            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4);
+            position: relative;
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        .icon-circle::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid rgba(37, 211, 102, 0.3);
+            animation: ringPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4); }
+            50% { box-shadow: 0 8px 40px rgba(37, 211, 102, 0.7); }
+        }
+        @keyframes ringPulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.15); opacity: 0; }
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 22px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #fff 30%, #25d366);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .subtitle i { color: var(--primary); font-size: 11px; }
+
+        /* QR Wrapper */
+        .qr-wrapper {
+            background: linear-gradient(135deg, #ffffff, #f0f4f8);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 16px;
+            display: inline-block;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(37, 211, 102, 0.1);
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .qr-wrapper:hover { transform: translateY(-3px); }
+        .qr-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(37, 211, 102, 0.15), transparent);
+            animation: rotate 4s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes rotate {
+            to { transform: rotate(360deg); }
+        }
+        #qrImage {
+            width: 200px; height: 200px;
+            display: block;
+            border-radius: 12px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            background: white;
+        }
+        .qr-wrapper .qr-label {
+            color: #1a2a3a;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn {
+            padding: 11px 20px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            flex: 1;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.2px;
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+        .btn:active::after { width: 300px; height: 300px; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            color: white;
+            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.35);
+        }
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+        .btn:active { transform: translateY(0); }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0 14px;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+        }
+
+        /* Generate QR Section */
+        .qr-generate-section {
+            padding: 14px 0 8px 0;
+        }
+        .qr-generate-section .qr-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.85);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .qr-generate-section .qr-label i { color: var(--primary); }
+        .qr-generate-section .qr-input-group { display: flex; gap: 10px; }
+        .qr-generate-section .qr-input-group input {
+            flex: 1;
+            padding: 11px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        .qr-generate-section .qr-input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.15);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .qr-generate-section .qr-input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .qr-generate-section .qr-input-group button {
+            padding: 11px 20px;
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+        }
+        .qr-generate-section .qr-input-group button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+        }
+
+        /* QR Preview */
+        .qr-preview {
+            margin-top: 14px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            border: 1px solid rgba(37, 211, 102, 0.3);
+            text-align: center;
+            display: none;
+            box-shadow: 0 8px 32px rgba(37, 211, 102, 0.15);
+        }
+        .qr-preview.show {
+            display: block !important;
+            animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .qr-preview img {
+            max-width: 180px;
+            height: auto;
+            border-radius: 12px;
+            background: white;
+            padding: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+        .qr-preview .qr-info {
+            margin-top: 12px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+        .qr-preview .qr-info strong { color: #fff; }
+        .qr-preview .qr-actions {
+            margin-top: 14px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .qr-preview .qr-actions button {
+            padding: 9px 18px;
+            border: none;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .qr-preview .qr-actions .btn-download {
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+        .qr-preview .qr-actions .btn-download:hover { transform: translateY(-2px); }
+        .qr-preview .qr-actions .btn-close {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .qr-preview .qr-actions .btn-close:hover { background: rgba(255, 255, 255, 0.2); }
+
+        /* Connection Status */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-top: 10px;
+            justify-content: center;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s;
+        }
+        .connection-status .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+        }
+        .connection-status .dot.online {
+            background: #4ade80;
+            box-shadow: 0 0 8px #4ade80;
+        }
+        .connection-status .dot.offline {
+            background: #f87171;
+            animation: pulse-red 1s ease-in-out infinite;
+        }
+        .connection-status .dot.checking {
+            background: #fbbf24;
+            animation: pulse-yellow 0.8s ease-in-out infinite;
+        }
+        @keyframes pulse-red {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.85); }
+        }
+        @keyframes pulse-yellow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Status Alert */
+        #status {
+            padding: 13px 16px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 13px;
+            display: none;
+            animation: slideUp 0.3s ease;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            border: 1px solid transparent;
+        }
+        #status i { font-size: 16px; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #status.success {
+            display: flex;
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+            border-color: #6ee7b7;
+        }
+        #status.error {
+            display: flex;
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+            border-color: #fca5a5;
+        }
+        #status.info {
+            display: flex;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1e40af;
+            border-color: #93c5fd;
+        }
+        #status.warning {
+            display: flex;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+            border-color: #fcd34d;
+        }
+
+        /* Scanner Area */
+        .scanner-area {
+            position: relative;
+            background: #1a1a2e;
+            border-radius: 18px;
+            margin-top: 14px;
+            min-height: 300px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+        #qr-reader {
+            width: 100% !important;
+            min-height: 300px;
+            background: #0d0d1a;
+            position: relative;
+        }
+        #qr-reader video {
+            width: 100% !important;
+            height: auto !important;
+            border-radius: 0 !important;
+            display: block !important;
+        }
+        #qr-reader > div:not(:first-child) { display: none !important; }
+        #qr-reader > div:first-child { width: 100% !important; height: auto !important; }
+        #qr-reader > div:first-child > div:first-child { width: 100% !important; height: auto !important; }
+
+        .scanner-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .scanner-overlay .scan-frame {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%; height: 40%;
+            border: 2px solid rgba(37, 211, 102, 0.5);
+            border-radius: 16px;
+            box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.55);
+        }
+        .scanner-overlay .scan-frame .corner {
+            position: absolute;
+            width: 22px; height: 22px;
+            border-color: #25d366;
+            border-style: solid;
+            border-width: 0;
+            filter: drop-shadow(0 0 6px rgba(37, 211, 102, 0.8));
+        }
+        .corner-tl { top: -2px; left: -2px; border-top-width: 4px; border-left-width: 4px; border-radius: 6px 0 0 0; }
+        .corner-tr { top: -2px; right: -2px; border-top-width: 4px; border-right-width: 4px; border-radius: 0 6px 0 0; }
+        .corner-bl { bottom: -2px; left: -2px; border-bottom-width: 4px; border-left-width: 4px; border-radius: 0 0 0 6px; }
+        .corner-br { bottom: -2px; right: -2px; border-bottom-width: 4px; border-right-width: 4px; border-radius: 0 0 6px 0; }
+        .scanner-overlay .scan-line {
+            position: absolute;
+            top: 30%; left: 20%; right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #25d366, #128c7e, transparent);
+            animation: scanMove 2.5s ease-in-out infinite;
+            border-radius: 2px;
+            box-shadow: 0 0 20px rgba(37, 211, 102, 0.6);
+        }
+        @keyframes scanMove {
+            0% { top: 30%; opacity: 0.5; }
+            50% { top: 70%; opacity: 1; }
+            100% { top: 30%; opacity: 0.5; }
+        }
+        .scanner-overlay .scan-text {
+            position: absolute;
+            bottom: 14px; left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(10px);
+            padding: 7px 18px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            z-index: 15;
+            white-space: nowrap;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+        .scanner-overlay .scan-text i {
+            color: #25d366;
+            font-size: 12px;
+            animation: pulse-icon 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-icon {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.9); }
+        }
+
+        /* Scanner Controls */
+        .scanner-controls {
+            display: flex;
+            gap: 10px;
+            padding: 14px 0 0;
+        }
+        .scanner-controls button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-scan {
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            color: white;
+            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
+        }
+        .btn-scan:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(37, 211, 102, 0.5);
+        }
+        .btn-scan.stop {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.35);
+        }
+        .btn-flash {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            flex: 0.4;
+        }
+        .btn-flash:hover { background: rgba(255, 255, 255, 0.15); }
+        .btn-flash.active {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #2c3e50;
+            border-color: #fbbf24;
+            box-shadow: 0 4px 16px rgba(251, 191, 36, 0.4);
+        }
+
+        /* Data Section */
+        .data-section {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .data-section .data-header {
+            padding: 14px 18px;
+            background: linear-gradient(135deg, rgba(37, 211, 102, 0.18), rgba(37, 211, 102, 0.06));
+            border-bottom: 2px solid rgba(37, 211, 102, 0.25);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .data-section .data-header .title {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .data-section .data-header .title i { color: #25d366; }
+        .data-section .data-header .count {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .data-section .table-wrapper {
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .data-section .table-wrapper::-webkit-scrollbar { width: 5px; }
+        .data-section .table-wrapper::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); }
+        .data-section .table-wrapper::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #25d366, #128c7e);
+            border-radius: 5px;
+        }
+        .data-section table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .data-section table th {
+            padding: 10px 12px;
+            text-align: left;
+            color: rgba(255, 255, 255, 0.55);
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            position: sticky;
+            top: 0;
+            background: rgba(15, 12, 41, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 1;
+        }
+        .data-section table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .data-section table tr {
+            transition: background 0.2s;
+        }
+        .data-section table tr:hover td {
+            background: rgba(37, 211, 102, 0.06);
+        }
+        .data-section table .status-hadir {
+            color: #25d366;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .data-section table .status-belum {
+            color: rgba(255, 255, 255, 0.35);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Footer */
+        .footer-note {
+            margin-top: 18px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.35);
+            text-align: center;
+            line-height: 1.8;
+        }
+        .footer-note i { color: #25d366; }
+        .footer-note a {
+            color: #25d366;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .footer-note a:hover {
+            text-decoration: underline;
+            text-shadow: 0 0 8px rgba(37, 211, 102, 0.5);
+        }
+
+        /* Loading */
+        .loading-text {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+        }
+        .loading-text i { margin-right: 8px; }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .container { padding: 20px 16px 16px; border-radius: 22px; }
+            h1 { font-size: 19px; }
+            #qrImage { width: 160px; height: 160px; }
+            .btn-group { flex-direction: row; }
+            .btn { font-size: 12px; padding: 10px 14px; }
+            .scanner-area { min-height: 240px; }
+            #qr-reader { min-height: 240px; }
+            .data-section table { font-size: 11px; }
+            .data-section table th, .data-section table td { padding: 8px 10px; }
+            .scanner-overlay .scan-text { font-size: 10px; padding: 5px 14px; }
+            .data-section .data-header .title { font-size: 13px; }
+            .qr-generate-section .qr-input-group { flex-direction: column; }
+            .qr-generate-section .qr-input-group button { width: 100%; justify-content: center; }
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="icon-circle">
+            <i class="fas fa-qrcode"></i>
+        </div>
+
+        <h1>Presensi Kelas</h1>
+        <p class="subtitle">
+            <i class="fas fa-circle"></i> Scan QR Code untuk Absensi
+        </p>
+
+        <div class="qr-wrapper">
+            <img id="qrImage" src="" alt="QR Code Presensi" />
+            <div class="qr-label">
+                <i class="fas fa-check-circle" style="color:#25d366;"></i> Scan untuk hadir
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="loadAllData()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+            <button class="btn btn-outline" onclick="downloadQR()">
+                <i class="fas fa-download"></i> QR
+            </button>
+            <a id="sheetLink" href="#" target="_blank" class="btn btn-secondary">
+                <i class="fas fa-external-link-alt"></i> Sheet
+            </a>
+        </div>
+
+        <div class="qr-generate-section">
+            <div class="qr-label">
+                <i class="fas fa-qrcode"></i> Generate QR Code Mahasiswa
+            </div>
+            <div class="qr-input-group">
+                <input type="text" id="qrNimInput" placeholder="Masukkan NIM" maxlength="20">
+                <button onclick="generateQRCode()">
+                    <i class="fas fa-qrcode"></i> Generate
+                </button>
+            </div>
+            <div class="qr-preview" id="qrPreview">
+                <img id="qrResultImage" src="" alt="QR Code">
+                <div class="qr-info" id="qrInfo"></div>
+                <div class="qr-actions">
+                    <button class="btn-download" onclick="downloadQRCode()">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button class="btn-close" onclick="closeQRPreview()">
+                        <i class="fas fa-times"></i> Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="connection-status" id="connectionStatus">
+            <span class="dot checking" id="statusDot"></span>
+            <span id="statusLabel">Mengecek koneksi...</span>
+        </div>
+
+        <div id="status"></div>
+
+        <div class="divider">
+            <span>Scan QR Code</span>
+        </div>
+
+        <div class="scanner-area" id="scannerArea">
+            <div id="qr-reader"></div>
+            <div class="scanner-overlay">
+                <div class="scan-frame">
+                    <div class="corner corner-tl"></div>
+                    <div class="corner corner-tr"></div>
+                    <div class="corner
