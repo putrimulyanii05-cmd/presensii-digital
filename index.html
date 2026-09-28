@@ -2,1026 +2,1300 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Presensi Kelas — BRUTAL EDITION</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#4f46e5" />
+<title>Presensi App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 <style>
-/* ============ NEO-BRUTALISM RESET ============ */
-* { margin:0; padding:0; box-sizing:border-box; }
+/* ============ RESET ============ */
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 
 :root {
-  --black: #09090b;
-  --white: #ffffff;
-  --cream: #fff8e7;
-  --yellow: #fde047;
-  --lime: #bef264;
-  --pink: #f472b6;
-  --cyan: #67e8f9;
-  --orange: #fb923c;
-  --purple: #c084fc;
-  --green: #4ade80;
-  --red: #f87171;
-  --blue: #60a5fa;
+  --primary: #4f46e5;
+  --primary-2: #7c3aed;
+  --primary-light: #eef2ff;
+  --accent: #f59e0b;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --text: #0f172a;
+  --text-2: #475569;
+  --text-muted: #94a3b8;
+  --border: #e2e8f0;
+  --shadow-sm: 0 1px 3px rgba(15,23,42,0.06);
+  --shadow-md: 0 4px 16px rgba(15,23,42,0.08);
+  --shadow-lg: 0 12px 32px rgba(79,70,229,0.15);
+  --radius: 20px;
+}
 
-  --border-w: 3px;
-  --shadow-sm: 4px 4px 0 var(--black);
-  --shadow-md: 6px 6px 0 var(--black);
-  --shadow-lg: 8px 8px 0 var(--black);
-  --radius: 16px;
+html, body {
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
-  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--cream);
-  background-image:
-    radial-gradient(circle at 20% 10%, var(--pink) 0%, transparent 25%),
-    radial-gradient(circle at 85% 80%, var(--cyan) 0%, transparent 25%),
-    radial-gradient(circle at 50% 50%, var(--yellow) 0%, transparent 40%);
-  background-attachment: fixed;
-  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #e8ecf5;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 20px 16px 100px;
-  color: var(--black);
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
 }
 
-/* Decorative grid dots */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: radial-gradient(var(--black) 1px, transparent 1px);
-  background-size: 24px 24px;
-  opacity: 0.08;
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* ============ APP CONTAINER ============ */
-.app {
-  max-width: 500px;
+/* ============ PHONE FRAME ============ */
+.phone {
   width: 100%;
+  max-width: 460px;
+  height: 100vh;
+  max-height: 100vh;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 60px rgba(0,0,0,0.15);
+}
+
+/* ============ TOP HEADER (gradient) ============ */
+.topbar {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  padding: 52px 22px 60px;
+  border-radius: 0 0 32px 32px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.topbar::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+}
+.topbar::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -40px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}
+.topbar-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   position: relative;
   z-index: 1;
 }
-
-/* ============ MARQUEE TOP BAR ============ */
-.marquee {
-  background: var(--black);
-  color: var(--yellow);
-  padding: 8px 0;
-  overflow: hidden;
-  border: var(--border-w) solid var(--black);
-  border-radius: 100px;
-  margin-bottom: 20px;
-  font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  position: relative;
-}
-.marquee-inner {
-  display: inline-block;
-  white-space: nowrap;
-  animation: marqueeScroll 20s linear infinite;
-  padding-left: 100%;
-}
-.marquee-inner span { padding: 0 20px; }
-.marquee-inner i { color: var(--pink); margin: 0 4px; }
-@keyframes marqueeScroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
-}
-
-/* ============ HEADER ============ */
-.header {
-  background: var(--white);
-  border: var(--border-w) solid var(--black);
-  border-radius: var(--radius);
-  padding: 18px 20px;
-  margin-bottom: 16px;
-  box-shadow: var(--shadow-md);
+.user-info {
   display: flex;
   align-items: center;
-  gap: 14px;
-  position: relative;
+  gap: 12px;
 }
-.header-badge {
-  position: absolute;
-  top: -12px;
-  right: 16px;
-  background: var(--pink);
-  color: var(--black);
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 10px;
-  letter-spacing: 1px;
-  padding: 4px 12px;
-  border: 2px solid var(--black);
-  border-radius: 100px;
-  transform: rotate(3deg);
-}
-.logo-box {
-  width: 56px; height: 56px;
-  background: var(--yellow);
-  border: var(--border-w) solid var(--black);
-  border-radius: 14px;
+.avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.3);
   display: flex; align-items: center; justify-content: center;
-  font-size: 26px;
-  color: var(--black);
-  box-shadow: var(--shadow-sm);
-  flex-shrink: 0;
-  transform: rotate(-4deg);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: white;
+  font-size: 18px;
+  font-weight: 800;
 }
-.logo-box:hover { transform: rotate(0deg) scale(1.05); }
-.header-text { flex: 1; min-width: 0; }
-.header-title {
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 20px;
-  line-height: 1.1;
-  letter-spacing: -0.5px;
-  color: var(--black);
+.greet-small {
+  font-size: 11px;
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
   margin-bottom: 2px;
 }
-.header-sub {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--black);
-  opacity: 0.7;
+.greet-name {
+  font-size: 15px;
+  color: white;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+.icon-circle {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.icon-circle:hover { background: rgba(255,255,255,0.25); }
+.icon-circle:active { transform: scale(0.92); }
+
+.topbar-title {
+  color: white;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-top: 20px;
+  position: relative;
+  z-index: 1;
+}
+.topbar-sub {
+  color: rgba(255,255,255,0.75);
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
-  gap: 5px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  gap: 6px;
 }
-.header-sub::before {
+.topbar-sub::before {
   content: '';
-  width: 8px; height: 8px;
+  width: 6px; height: 6px;
   border-radius: 50%;
-  background: var(--green);
-  border: 1.5px solid var(--black);
-  animation: blinkDot 1.5s ease-in-out infinite;
+  background: #4ade80;
+  box-shadow: 0 0 8px #4ade80;
+  animation: pulse 2s infinite;
 }
-@keyframes blinkDot {
-  0%,100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.7); }
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
-/* ============ STATS GRID ============ */
-.stats {
+/* ============ CONTENT AREA ============ */
+.content {
+  flex: 1;
+  margin-top: -40px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 16px 100px;
+  position: relative;
+  z-index: 2;
+  -webkit-overflow-scrolling: touch;
+}
+.content::-webkit-scrollbar { width: 0; }
+
+.page {
+  display: none;
+  animation: pageIn 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+.page.active { display: block; }
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ STATS ROW ============ */
+.stats-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
   margin-bottom: 16px;
 }
-.stat {
-  background: var(--white);
-  border: var(--border-w) solid var(--black);
-  border-radius: var(--radius);
+.stat-box {
+  background: var(--card);
+  border-radius: 16px;
   padding: 14px 10px 12px;
   text-align: center;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  position: relative;
-  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(226,232,240,0.6);
+  transition: transform 0.2s;
 }
-.stat:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 var(--black);
+.stat-box:active { transform: scale(0.97); }
+.stat-icon {
+  width: 34px; height: 34px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 8px;
+  font-size: 14px;
 }
-.stat:nth-child(1) { background: var(--cyan); }
-.stat:nth-child(2) { background: var(--lime); }
-.stat:nth-child(3) { background: var(--orange); }
-.stat-value {
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 28px;
-  line-height: 1;
-  color: var(--black);
-  margin-bottom: 4px;
-}
-.stat-label {
-  font-size: 9px;
+.stat-icon.total { background: #eef2ff; color: #4f46e5; }
+.stat-icon.hadir { background: #d1fae5; color: #059669; }
+.stat-icon.belum { background: #fef3c7; color: #d97706; }
+.stat-val {
+  font-size: 20px;
   font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  line-height: 1;
+}
+.stat-lbl {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--black);
+  letter-spacing: 0.5px;
+  margin-top: 4px;
 }
 
-/* ============ PROGRESS ============ */
-.progress-card {
-  background: var(--white);
-  border: var(--border-w) solid var(--black);
+/* ============ PROGRESS CARD ============ */
+.prog-card {
+  background: var(--card);
   border-radius: var(--radius);
   padding: 16px 18px;
   margin-bottom: 16px;
-  box-shadow: var(--shadow-md);
   display: flex;
   align-items: center;
   gap: 16px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(226,232,240,0.6);
 }
-.progress-ring {
+.prog-ring {
   position: relative;
-  width: 74px; height: 74px;
+  width: 60px; height: 60px;
   flex-shrink: 0;
 }
-.progress-ring svg {
-  transform: rotate(-90deg);
-  width: 74px; height: 74px;
-}
-.progress-ring .bg {
+.prog-ring svg { transform: rotate(-90deg); width: 60px; height: 60px; }
+.prog-ring .bg { fill: none; stroke: #eef2ff; stroke-width: 6; }
+.prog-ring .fg {
   fill: none;
-  stroke: var(--cream);
-  stroke-width: 8;
-}
-.progress-ring .fg {
-  fill: none;
-  stroke: var(--black);
-  stroke-width: 8;
+  stroke: url(#gradProg);
+  stroke-width: 6;
   stroke-linecap: round;
-  stroke-dasharray: 188;
-  stroke-dashoffset: 188;
-  transition: stroke-dashoffset 1.2s cubic-bezier(0.65, 0, 0.35, 1);
+  stroke-dasharray: 157;
+  stroke-dashoffset: 157;
+  transition: stroke-dashoffset 1s cubic-bezier(0.16,1,0.3,1);
 }
-.progress-ring .pct {
-  position: absolute;
-  inset: 0;
+.prog-ring .pct {
+  position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 15px;
-  color: var(--black);
+  font-size: 13px; font-weight: 800;
+  color: var(--primary);
 }
-.progress-info { flex: 1; min-width: 0; }
-.progress-title {
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 14px;
-  letter-spacing: -0.3px;
-  color: var(--black);
+.prog-txt { flex: 1; min-width: 0; }
+.prog-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
   margin-bottom: 3px;
 }
-.progress-desc {
+.prog-desc {
   font-size: 11px;
-  font-weight: 600;
-  color: var(--black);
-  opacity: 0.7;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
-/* ============ CARD ============ */
-.card {
-  background: var(--white);
-  border: var(--border-w) solid var(--black);
-  border-radius: var(--radius);
-  padding: 18px;
-  margin-bottom: 16px;
-  box-shadow: var(--shadow-md);
-  position: relative;
+/* ============ SECTION TITLE ============ */
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 2px 12px;
 }
-.card-title {
-  font-family: 'Archivo Black', sans-serif;
+.section-title h2 {
   font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
   letter-spacing: -0.3px;
+}
+.section-title a {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
-  color: var(--black);
-}
-.card-title .icon-box {
-  width: 32px; height: 32px;
-  background: var(--yellow);
-  border: 2px solid var(--black);
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px;
-  color: var(--black);
-  box-shadow: 2px 2px 0 var(--black);
-  flex-shrink: 0;
-}
-.card-title .badge {
-  margin-left: auto;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
-  font-weight: 800;
-  padding: 4px 10px;
-  background: var(--pink);
-  color: var(--black);
-  border: 2px solid var(--black);
-  border-radius: 100px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  gap: 4px;
 }
 
-/* ============ QR WRAPPER ============ */
-.qr-wrap {
+/* ============ QUICK ACTIONS ============ */
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.quick-item {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 12px 4px 10px;
   text-align: center;
-  padding: 10px 0 4px;
-  position: relative;
+  cursor: pointer;
+  border: 1px solid rgba(226,232,240,0.6);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.quick-item:active { transform: scale(0.94); }
+.quick-icon {
+  width: 40px; height: 40px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  color: white;
+}
+.quick-icon.scan { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+.quick-icon.refresh { background: linear-gradient(135deg, #10b981, #059669); }
+.quick-icon.sheet { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.quick-icon.wa { background: linear-gradient(135deg, #25d366, #128c7e); }
+.quick-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-2);
+  letter-spacing: -0.1px;
+}
+
+/* ============ QR CARD ============ */
+.qr-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(226,232,240,0.6);
+  margin-bottom: 4px;
 }
 .qr-frame {
   display: inline-block;
-  padding: 14px;
-  background: var(--white);
-  border: var(--border-w) solid var(--black);
-  border-radius: 20px;
-  box-shadow: var(--shadow-lg);
-  position: relative;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.qr-frame:hover {
-  transform: translate(-3px, -3px) rotate(-1deg);
-  box-shadow: 11px 11px 0 var(--black);
-}
-.qr-frame::before {
-  content: 'SCAN';
-  position: absolute;
-  top: -14px; right: -14px;
-  background: var(--pink);
-  color: var(--black);
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 10px;
-  padding: 5px 12px;
-  border: 2px solid var(--black);
-  border-radius: 100px;
-  letter-spacing: 1px;
-  transform: rotate(12deg);
+  padding: 12px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(79,70,229,0.12);
+  border: 1px solid rgba(226,232,240,0.8);
 }
 #qrImage canvas, #qrImage img {
   display: block;
-  border-radius: 10px;
+  border-radius: 8px;
 }
-.qr-caption {
-  margin-top: 14px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--black);
+.qr-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  margin-top: 14px;
   padding: 6px 14px;
-  background: var(--lime);
-  border: 2px solid var(--black);
+  background: var(--primary-light);
+  color: var(--primary);
   border-radius: 100px;
-  box-shadow: 3px 3px 0 var(--black);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.qr-caption i { font-size: 11px; }
-
-/* ============ BUTTONS ============ */
-.btn-row { display: flex; gap: 10px; margin-bottom: 16px; }
-.btn {
-  flex: 1;
-  padding: 12px 14px;
-  border: var(--border-w) solid var(--black);
-  border-radius: 14px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 800;
-  font-size: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-  text-decoration: none;
-  color: var(--black);
-  background: var(--white);
-  box-shadow: var(--shadow-sm);
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-  position: relative;
-}
-.btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 var(--black);
-}
-.btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--black);
-}
-.btn-primary { background: var(--yellow); }
-.btn-lime { background: var(--lime); }
-.btn-cyan { background: var(--cyan); }
-.btn-pink { background: var(--pink); }
-.btn-purple { background: var(--purple); }
-
-/* ============ INPUT ============ */
-.input-group { display: flex; gap: 10px; }
-.input-group input {
-  flex: 1;
-  padding: 13px 16px;
-  border: var(--border-w) solid var(--black);
-  border-radius: 14px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 700;
-  background: var(--white);
-  color: var(--black);
-  transition: all 0.15s;
-  box-shadow: inset 3px 3px 0 rgba(0,0,0,0.06);
 }
-.input-group input:focus {
-  outline: none;
-  background: var(--yellow);
-  box-shadow: inset 3px 3px 0 rgba(0,0,0,0.1);
+.qr-badge i { font-size: 10px; }
+
+/* ============ RECENT ACTIVITY ============ */
+.activity-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 4px 0;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(226,232,240,0.6);
+  margin-bottom: 4px;
+  overflow: hidden;
 }
-.input-group input::placeholder {
-  color: var(--black);
-  opacity: 0.35;
-  font-weight: 600;
-}
-.input-group button {
-  padding: 13px 20px;
-  border: var(--border-w) solid var(--black);
-  border-radius: 14px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 800;
-  font-size: 13px;
-  cursor: pointer;
-  background: var(--pink);
-  color: var(--black);
+.activity-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: var(--shadow-sm);
-  white-space: nowrap;
-  text-transform: uppercase;
-}
-.input-group button:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 var(--black);
-}
-.input-group button:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--black);
-}
-
-/* ============ QR PREVIEW ============ */
-.qr-preview {
-  margin-top: 14px;
-  padding: 18px;
-  background: var(--cyan);
-  border: var(--border-w) solid var(--black);
-  border-radius: 16px;
-  text-align: center;
-  display: none;
-  box-shadow: var(--shadow-sm);
-}
-.qr-preview.show {
-  display: block;
-  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-@keyframes popIn {
-  from { opacity: 0; transform: scale(0.9) rotate(-2deg); }
-  to { opacity: 1; transform: scale(1) rotate(0); }
-}
-.qr-preview .preview-actions {
-  margin-top: 14px;
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.qr-preview .preview-actions button {
-  padding: 9px 16px;
-  border: 2px solid var(--black);
-  border-radius: 10px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 800;
-  font-size: 11px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  transition: all 0.15s;
-  background: var(--white);
-  color: var(--black);
-  box-shadow: 3px 3px 0 var(--black);
-  text-transform: uppercase;
-}
-.qr-preview .preview-actions button:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0 var(--black);
-}
-.qr-preview .preview-actions button:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0 var(--black);
-}
-.btn-dl { background: var(--lime) !important; }
-.btn-wa-sm { background: #25d366 !important; color: white !important; }
-.btn-close-sm { background: var(--red) !important; }
-
-/* ============ CONNECTION ============ */
-.conn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background: var(--white);
-  border: var(--border-w) solid var(--black);
-  border-radius: 100px;
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--black);
-  margin-bottom: 16px;
-  box-shadow: var(--shadow-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.conn .dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  border: 2px solid var(--black);
-}
-.conn .dot.online { background: var(--green); }
-.conn .dot.offline { background: var(--red); animation: blinkDot 1s infinite; }
-.conn .dot.checking { background: var(--yellow); animation: blinkDot 0.8s infinite; }
-
-/* ============ ALERT ============ */
-.alert {
+  gap: 12px;
   padding: 14px 18px;
-  border: var(--border-w) solid var(--black);
-  border-radius: 14px;
-  font-size: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.activity-item:last-child { border-bottom: none; }
+.act-avatar {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  color: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
   font-weight: 800;
-  display: none;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-  box-shadow: var(--shadow-sm);
-  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+}
+.act-body { flex: 1; min-width: 0; }
+.act-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.act-info {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 2px;
+}
+.act-status {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 100px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
-.alert.success { display: flex; background: var(--lime); color: var(--black); }
-.alert.error { display: flex; background: var(--red); color: var(--black); }
-.alert.info { display: flex; background: var(--cyan); color: var(--black); }
-.alert.warning { display: flex; background: var(--yellow); color: var(--black); }
-.alert i { font-size: 16px; }
+.act-status.hadir { background: #d1fae5; color: #059669; }
+.act-status.belum { background: #f1f5f9; color: #64748b; }
 
-/* ============ SCANNER ============ */
-.scanner-wrap {
-  position: relative;
-  background: var(--black);
-  border: var(--border-w) solid var(--black);
-  border-radius: 16px;
+/* ============ SCAN PAGE ============ */
+.scan-container {
+  background: #0f172a;
+  border-radius: var(--radius);
+  padding: 0;
   overflow: hidden;
-  min-height: 280px;
+  position: relative;
   margin-bottom: 14px;
+  aspect-ratio: 1;
+  max-height: 380px;
 }
-#qr-reader { width: 100% !important; min-height: 280px; }
+#qr-reader {
+  width: 100% !important;
+  height: 100% !important;
+  background: #0f172a;
+}
 #qr-reader video {
   width: 100% !important;
-  height: auto !important;
+  height: 100% !important;
+  object-fit: cover;
   display: block !important;
-  filter: contrast(1.1) saturate(1.2);
 }
 #qr-reader > div:not(:first-child) { display: none !important; }
-#qr-reader > div:first-child { width: 100% !important; height: auto !important; }
+#qr-reader > div:first-child { width: 100% !important; height: 100% !important; }
 
 .scan-overlay {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.scan-box {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%,-50%);
-  width: 62%; height: 42%;
-  box-shadow: 0 0 0 4000px rgba(9,9,11,0.75);
+.scan-frame {
+  width: 62%; aspect-ratio: 1;
+  position: relative;
+  box-shadow: 0 0 0 4000px rgba(15,23,42,0.65);
+  border-radius: 20px;
 }
-.scan-box .c {
+.scan-frame .corner {
   position: absolute;
-  width: 34px; height: 34px;
+  width: 28px; height: 28px;
+  border-color: #a5b4fc;
   border-style: solid;
   border-width: 0;
-  border-color: var(--yellow);
 }
-.c-tl { top:-3px; left:-3px; border-top-width:6px; border-left-width:6px; }
-.c-tr { top:-3px; right:-3px; border-top-width:6px; border-right-width:6px; }
-.c-bl { bottom:-3px; left:-3px; border-bottom-width:6px; border-left-width:6px; }
-.c-br { bottom:-3px; right:-3px; border-bottom-width:6px; border-right-width:6px; }
+.c-tl { top:-2px; left:-2px; border-top-width:4px; border-left-width:4px; border-radius:14px 0 0 0; }
+.c-tr { top:-2px; right:-2px; border-top-width:4px; border-right-width:4px; border-radius:0 14px 0 0; }
+.c-bl { bottom:-2px; left:-2px; border-bottom-width:4px; border-left-width:4px; border-radius:0 0 0 14px; }
+.c-br { bottom:-2px; right:-2px; border-bottom-width:4px; border-right-width:4px; border-radius:0 0 14px 0; }
 .scan-laser {
   position: absolute;
-  left: 5%; right: 5%;
-  height: 4px;
-  background: var(--yellow);
-  border-radius: 4px;
-  box-shadow: 0 0 20px var(--yellow);
-  animation: laserMove 2s ease-in-out infinite;
+  left: 10%; right: 10%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #a5b4fc, #818cf8, #a5b4fc, transparent);
+  border-radius: 2px;
+  box-shadow: 0 0 20px rgba(165,180,252,0.8);
+  animation: laser 2.4s ease-in-out infinite;
 }
-@keyframes laserMove {
-  0% { top: 25%; }
-  50% { top: 75%; }
-  100% { top: 25%; }
+@keyframes laser {
+  0% { top: 15%; opacity: 0.5; }
+  50% { top: 85%; opacity: 1; }
+  100% { top: 15%; opacity: 0.5; }
 }
-.scan-status {
+
+.scan-hint {
   position: absolute;
-  bottom: 14px; left: 50%;
+  bottom: 16px; left: 50%;
   transform: translateX(-50%);
-  background: var(--yellow);
-  color: var(--black);
+  background: rgba(15,23,42,0.85);
+  backdrop-filter: blur(12px);
+  color: white;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 600;
   padding: 8px 16px;
-  border: 2px solid var(--black);
   border-radius: 100px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  border: 1px solid rgba(165,180,252,0.3);
+  z-index: 15;
+}
+.scan-hint i { color: #a5b4fc; font-size: 11px; animation: pulse 1.5s infinite; }
+
+.scan-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.btn-app {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 16px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+  letter-spacing: -0.2px;
+}
+.btn-app:active { transform: scale(0.97); }
+.btn-app.primary {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+}
+.btn-app.danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 4px 16px rgba(239,68,68,0.35);
+}
+.btn-app.soft {
+  background: white;
+  color: var(--text);
+  border: 1px solid var(--border);
+  flex: 0.35;
+}
+.btn-app.soft.active {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  color: white;
+  border-color: transparent;
+}
+
+/* ============ DATA PAGE ============ */
+.search-box {
+  position: relative;
+  margin-bottom: 14px;
+}
+.search-box input {
+  width: 100%;
+  padding: 14px 16px 14px 44px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  background: white;
+  color: var(--text);
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+.search-box input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+}
+.search-box input::placeholder { color: var(--text-muted); }
+.search-box i {
+  position: absolute;
+  left: 16px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.student-list {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(226,232,240,0.6);
+  overflow: hidden;
+}
+.student-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.15s;
+}
+.student-item:last-child { border-bottom: none; }
+.student-item:hover { background: #f8fafc; }
+.stu-avatar {
+  width: 42px; height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  color: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.stu-avatar.hadir {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  color: #059669;
+}
+.stu-body { flex: 1; min-width: 0; }
+.stu-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stu-info {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* ============ PROFILE PAGE ============ */
+.profile-hero {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  text-align: center;
+  color: white;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.profile-hero::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 140px; height: 140px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+.profile-avatar {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  border: 3px solid rgba(255,255,255,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 12px;
+  position: relative;
+  z-index: 1;
+}
+.profile-name {
+  font-size: 17px;
+  font-weight: 800;
+  position: relative; z-index: 1;
+}
+.profile-sub {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: 4px;
+  position: relative; z-index: 1;
+}
+
+.menu-list {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(226,232,240,0.6);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-decoration: none;
+  color: inherit;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-item:hover { background: #f8fafc; }
+.menu-item:active { background: #f1f5f9; }
+.menu-icon {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.menu-icon.wa { background: #d1fae5; color: #25d366; }
+.menu-icon.sheet { background: #fef3c7; color: #d97706; }
+.menu-icon.qr { background: #eef2ff; color: #4f46e5; }
+.menu-icon.info { background: #f3e8ff; color: #9333ea; }
+.menu-icon.download { background: #dbeafe; color: #2563eb; }
+.menu-body { flex: 1; min-width: 0; }
+.menu-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.menu-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-weight: 500;
+}
+.menu-arrow {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* ============ GENERATE QR IN PROFILE ============ */
+.gen-box {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(226,232,240,0.6);
+  margin-bottom: 14px;
+}
+.gen-box h3 {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.gen-box h3 i { color: var(--primary); }
+.gen-input {
+  display: flex;
+  gap: 8px;
+}
+.gen-input input {
+  flex: 1;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+.gen-input input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+}
+.gen-input button {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  white-space: nowrap;
-  box-shadow: 3px 3px 0 var(--black);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(79,70,229,0.3);
 }
-.scan-status i { font-size: 12px; }
+.gen-input button:active { transform: scale(0.96); }
 
-.scan-controls { display: flex; gap: 10px; }
-.scan-controls button {
-  flex: 1;
-  padding: 14px;
-  border: var(--border-w) solid var(--black);
+.qr-preview {
+  margin-top: 14px;
+  padding: 16px;
+  background: #f8fafc;
   border-radius: 14px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 800;
-  font-size: 13px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-  background: var(--lime);
-  color: var(--black);
-  box-shadow: var(--shadow-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.scan-controls button:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 var(--black);
-}
-.scan-controls button:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--black);
-}
-.btn-scan-on.stop {
-  background: var(--red);
-}
-.btn-flash-sm {
-  background: var(--cyan);
-  flex: 0.35;
-}
-.btn-flash-sm.active {
-  background: var(--yellow);
-}
-
-/* ============ TABLE ============ */
-.table-wrap {
-  max-height: 280px;
-  overflow-y: auto;
-  margin: 0 -6px;
-  padding: 0 6px;
-}
-.table-wrap::-webkit-scrollbar { width: 8px; }
-.table-wrap::-webkit-scrollbar-track { background: var(--cream); border-radius: 8px; }
-.table-wrap::-webkit-scrollbar-thumb {
-  background: var(--black);
-  border-radius: 8px;
-}
-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; }
-th {
-  text-align: left;
-  padding: 10px 8px;
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--black);
-  background: var(--yellow);
-  border: 2px solid var(--black);
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-th:first-child { border-radius: 10px 0 0 0; }
-th:last-child { border-radius: 0 10px 0 0; }
-td {
-  padding: 10px 8px;
-  border: 2px solid var(--black);
-  border-top: none;
-  font-weight: 700;
-  background: var(--white);
-  color: var(--black);
-}
-tr:hover td { background: var(--cream); }
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border: 2px solid var(--black);
-  border-radius: 100px;
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-.status-pill.hadir { background: var(--lime); color: var(--black); }
-.status-pill.belum { background: var(--cream); color: var(--black); opacity: 0.6; }
-
-/* ============ FLOATING WA ============ */
-.wa-fab {
-  position: fixed;
-  bottom: 24px; right: 24px;
-  width: 66px; height: 66px;
-  border-radius: 50%;
-  background: #25d366;
-  color: var(--black);
-  border: var(--border-w) solid var(--black);
-  font-size: 28px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 6px 6px 0 var(--black);
-  z-index: 100;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-  animation: fabPop 0.6s 0.3s both;
-}
-@keyframes fabPop {
-  0% { transform: scale(0) rotate(-180deg); }
-  70% { transform: scale(1.15) rotate(10deg); }
-  100% { transform: scale(1) rotate(0); }
-}
-.wa-fab:hover {
-  transform: translate(-3px, -3px) rotate(-8deg);
-  box-shadow: 9px 9px 0 var(--black);
-}
-.wa-fab:active {
-  transform: translate(2px, 2px);
-  box-shadow: 4px 4px 0 var(--black);
-}
-
-/* ============ FOOTER ============ */
-.footer {
   text-align: center;
-  padding: 20px 10px;
+  display: none;
+}
+.qr-preview.show { display: block; animation: pageIn 0.3s; }
+.qr-preview .preview-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.qr-preview .preview-actions button {
+  padding: 9px 14px;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-weight: 700;
   font-size: 11px;
-  font-weight: 700;
-  color: var(--black);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.footer a {
-  color: var(--black);
-  text-decoration: none;
-  background: var(--yellow);
-  padding: 2px 8px;
-  border: 2px solid var(--black);
-  border-radius: 100px;
-  font-weight: 800;
-  display: inline-block;
-  margin: 3px 2px;
-  transition: all 0.15s;
-}
-.footer a:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 2px 2px 0 var(--black);
-  background: var(--lime);
-}
-
-.loading {
-  text-align: center;
-  padding: 32px 20px;
-  font-weight: 700;
-  font-size: 12px;
-  color: var(--black);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.loading i { margin-right: 6px; }
-
-/* ============ STICKER DECORATIONS ============ */
-.sticker {
-  position: absolute;
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 10px;
-  padding: 5px 12px;
-  border: 2px solid var(--black);
-  border-radius: 100px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  z-index: 5;
-  pointer-events: none;
-}
-.sticker-live {
-  top: 14px; left: 14px;
-  background: var(--red);
-  color: var(--white);
-  transform: rotate(-8deg);
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 5px;
+  transition: all 0.2s;
 }
-.sticker-live::before {
+.btn-dl { background: #4f46e5; color: white; }
+.btn-wa-sm { background: #25d366; color: white; }
+.btn-close-sm { background: #f1f5f9; color: var(--text); }
+
+/* ============ BOTTOM NAV ============ */
+.bottomnav {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.98);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(226,232,240,0.8);
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: space-around;
+  z-index: 50;
+  box-shadow: 0 -4px 24px rgba(15,23,42,0.06);
+}
+.nav-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.25s;
+  color: var(--text-muted);
+  font-family: inherit;
+  border-radius: 12px;
+  position: relative;
+}
+.nav-btn i {
+  font-size: 18px;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.nav-btn span {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+  transition: all 0.2s;
+}
+.nav-btn.active { color: var(--primary); }
+.nav-btn.active i { transform: translateY(-2px) scale(1.1); }
+.nav-btn.active::before {
   content: '';
-  width: 6px; height: 6px;
-  background: var(--white);
-  border-radius: 50%;
-  animation: blinkDot 1.2s infinite;
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px; height: 3px;
+  background: var(--primary);
+  border-radius: 0 0 4px 4px;
 }
+
+/* ============ ALERTS / TOAST ============ */
+.alert {
+  position: fixed;
+  top: 20px; left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  max-width: 420px;
+  width: calc(100% - 32px);
+  padding: 14px 16px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 12px 40px rgba(15,23,42,0.2);
+  z-index: 999;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+}
+.alert.show { transform: translateX(-50%) translateY(0); }
+.alert i { font-size: 16px; flex-shrink: 0; }
+.alert.success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.alert.success i { color: #10b981; }
+.alert.error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.alert.error i { color: #ef4444; }
+.alert.warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+.alert.warning i { color: #f59e0b; }
+.alert.info { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+.alert.info i { color: #3b82f6; }
+
+/* ============ LOADING ============ */
+.loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+.loading i { color: var(--primary); margin-right: 6px; }
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+}
+.empty-state .icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+  display: block;
+}
+.empty-state strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.empty-state p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.empty-state button {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+}
+
+/* ============ FLOATING WA ============ */
+.wa-fab {
+  position: absolute;
+  bottom: 82px; right: 16px;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: #25d366;
+  color: white;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 24px rgba(37,211,102,0.4);
+  z-index: 40;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.wa-fab:active { transform: scale(0.92); }
+.wa-fab::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid #25d366;
+  animation: fabRing 2s ease-in-out infinite;
+}
+@keyframes fabRing {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* ============ CONNECTION PILL ============ */
+.conn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.conn .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+}
+.conn .dot.online { background: #4ade80; box-shadow: 0 0 6px #4ade80; }
+.conn .dot.offline { background: #f87171; animation: pulse 1s infinite; }
+.conn .dot.checking { background: #fbbf24; animation: pulse 0.8s infinite; }
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 480px) {
-  body { padding: 14px 12px 90px; }
-  .header { padding: 14px 16px; }
-  .header-title { font-size: 17px; }
-  .logo-box { width: 48px; height: 48px; font-size: 22px; }
-  .stat-value { font-size: 24px; }
-  .card { padding: 14px; }
-  .input-group { flex-direction: column; }
-  .input-group button { justify-content: center; width: 100%; }
-  .wa-fab { width: 58px; height: 58px; font-size: 24px; bottom: 18px; right: 18px; }
-  .qr-frame { padding: 10px; }
+  body { background: var(--bg); }
+  .phone { box-shadow: none; }
 }
 </style>
 </head>
 <body>
 
-<div class="app">
+<div class="phone">
 
-  <!-- MARQUEE -->
-  <div class="marquee">
-    <div class="marquee-inner">
-      <span><i class="fas fa-bolt"></i> SISTEM PRESENSI KELAS <i class="fas fa-bolt"></i></span>
-      <span><i class="fas fa-qrcode"></i> SCAN QR CODE <i class="fas fa-qrcode"></i></span>
-      <span><i class="fas fa-check-circle"></i> ABSENSI OTOMATIS <i class="fas fa-check-circle"></i></span>
-      <span><i class="fas fa-bolt"></i> SISTEM PRESENSI KELAS <i class="fas fa-bolt"></i></span>
-      <span><i class="fas fa-qrcode"></i> SCAN QR CODE <i class="fas fa-qrcode"></i></span>
-    </div>
-  </div>
-
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-badge">v2.0</div>
-    <div class="logo-box"><i class="fas fa-qrcode"></i></div>
-    <div class="header-text">
-      <div class="header-title">PRESENSI KELAS</div>
-      <div class="header-sub">Scan QR untuk absen</div>
-    </div>
-  </div>
-
-  <!-- STATS -->
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-value" id="statTotal">0</div>
-      <div class="stat-label">TOTAL</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value" id="statHadir">0</div>
-      <div class="stat-label">HADIR</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value" id="statBelum">0</div>
-      <div class="stat-label">BELUM</div>
-    </div>
-  </div>
-
-  <!-- PROGRESS -->
-  <div class="progress-card">
-    <div class="progress-ring">
-      <svg>
-        <circle class="bg" cx="37" cy="37" r="30"/>
-        <circle class="fg" id="progressRing" cx="37" cy="37" r="30"/>
-      </svg>
-      <div class="pct" id="progressPct">0%</div>
-    </div>
-    <div class="progress-info">
-      <div class="progress-title">KEHADIRAN HARI INI</div>
-      <div class="progress-desc" id="progressDesc">Memuat data...</div>
-    </div>
-  </div>
-
-  <!-- QR CODE UTAMA -->
-  <div class="card">
-    <div class="card-title">
-      <div class="icon-box"><i class="fas fa-qrcode"></i></div>
-      QR PRESENSI
-      <span class="badge">SCAN ME</span>
-    </div>
-    <div class="qr-wrap">
-      <div class="qr-frame">
-        <div id="qrImage"></div>
-      </div>
-      <div class="qr-caption"><i class="fas fa-check-circle"></i> Scan untuk hadir</div>
-    </div>
-  </div>
-
-  <!-- ACTION ROW -->
-  <div class="btn-row">
-    <button class="btn btn-lime" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
-    <button class="btn btn-cyan" onclick="downloadQR()"><i class="fas fa-download"></i> QR</button>
-    <a id="sheetLink" href="#" target="_blank" class="btn btn-purple"><i class="fas fa-table"></i> Sheet</a>
-  </div>
-
-  <!-- GENERATE QR MAHASISWA -->
-  <div class="card">
-    <div class="card-title">
-      <div class="icon-box"><i class="fas fa-user-plus"></i></div>
-      GENERATE QR MAHASISWA
-    </div>
-    <div class="input-group">
-      <input type="text" id="qrNimInput" placeholder="MASUKKAN NIM" maxlength="20">
-      <button onclick="generateQRCode()"><i class="fas fa-bolt"></i> BUAT</button>
-    </div>
-    <div class="qr-preview" id="qrPreview">
-      <div id="qrResultImage" style="display:inline-block"></div>
-      <div id="qrInfo" style="margin-top:10px;font-size:12px;font-weight:700;color:var(--black);line-height:1.6"></div>
-      <div class="preview-actions">
-        <button class="btn-dl" onclick="downloadQRCode()"><i class="fas fa-download"></i> Unduh</button>
-        <button class="btn-wa-sm" onclick="shareQRToWA()"><i class="fab fa-whatsapp"></i> WA</button>
-        <button class="btn-close-sm" onclick="closeQRPreview()"><i class="fas fa-times"></i> Tutup</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- CONNECTION -->
-  <div class="conn" id="connectionStatus">
-    <span class="dot checking" id="statusDot"></span>
-    <span id="statusLabel">Mengecek koneksi...</span>
-  </div>
-
-  <!-- ALERT -->
-  <div class="alert" id="status"></div>
-
-  <!-- SCANNER -->
-  <div class="card" style="position:relative">
-    <div class="sticker sticker-live">LIVE</div>
-    <div class="card-title" style="margin-top:8px">
-      <div class="icon-box"><i class="fas fa-camera"></i></div>
-      SCANNER QR CODE
-    </div>
-    <div class="scanner-wrap">
-      <div id="qr-reader"></div>
-      <div class="scan-overlay">
-        <div class="scan-box">
-          <div class="c c-tl"></div><div class="c c-tr"></div>
-          <div class="c c-bl"></div><div class="c c-br"></div>
-          <div class="scan-laser"></div>
+  <!-- TOP HEADER -->
+  <div class="topbar">
+    <div class="topbar-row">
+      <div class="user-info">
+        <div class="avatar" id="userAvatar">P</div>
+        <div>
+          <div class="greet-small" id="greetTime">Selamat pagi,</div>
+          <div class="greet-name">Presensi Kelas</div>
         </div>
-        <div class="scan-status"><i class="fas fa-qrcode"></i> <span id="scanStatusText">Arahkan ke QR Code</span></div>
+      </div>
+      <div class="conn" id="connectionStatus">
+        <span class="dot checking" id="statusDot"></span>
+        <span id="statusLabel">Cek...</span>
       </div>
     </div>
-    <div class="scan-controls">
-      <button class="btn-scan-on" id="btnStartScan" onclick="toggleScanner()"><i class="fas fa-play"></i> MULAI SCAN</button>
-      <button class="btn-flash-sm" id="btnFlash" onclick="toggleFlash()"><i class="fas fa-bolt"></i></button>
-    </div>
+    <div class="topbar-title" id="pageTitle">Beranda</div>
+    <div class="topbar-sub" id="pageSubtitle">Sistem presensi QR Code</div>
   </div>
 
-  <!-- DATA TABLE -->
-  <div class="card">
-    <div class="card-title">
-      <div class="icon-box"><i class="fas fa-users"></i></div>
-      DAFTAR MAHASISWA
-      <span class="badge" id="totalMahasiswa">0</span>
+  <!-- CONTENT PAGES -->
+  <div class="content">
+
+    <!-- ============ PAGE: HOME ============ -->
+    <div class="page active" id="page-home">
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-icon total"><i class="fas fa-users"></i></div>
+          <div class="stat-val" id="statTotal">0</div>
+          <div class="stat-lbl">Total</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-icon hadir"><i class="fas fa-check"></i></div>
+          <div class="stat-val" id="statHadir">0</div>
+          <div class="stat-lbl">Hadir</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-icon belum"><i class="fas fa-clock"></i></div>
+          <div class="stat-val" id="statBelum">0</div>
+          <div class="stat-lbl">Belum</div>
+        </div>
+      </div>
+
+      <!-- PROGRESS -->
+      <div class="prog-card">
+        <div class="prog-ring">
+          <svg>
+            <defs>
+              <linearGradient id="gradProg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#4f46e5"/>
+                <stop offset="100%" stop-color="#7c3aed"/>
+              </linearGradient>
+            </defs>
+            <circle class="bg" cx="30" cy="30" r="25"/>
+            <circle class="fg" id="progressRing" cx="30" cy="30" r="25"/>
+          </svg>
+          <div class="pct" id="progressPct">0%</div>
+        </div>
+        <div class="prog-txt">
+          <div class="prog-title">Kehadiran Hari Ini</div>
+          <div class="prog-desc" id="progressDesc">Memuat data...</div>
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="section-title">
+        <h2>Aksi Cepat</h2>
+      </div>
+      <div class="quick-grid">
+        <a class="quick-item" onclick="switchPage('scan')">
+          <div class="quick-icon scan"><i class="fas fa-qrcode"></i></div>
+          <div class="quick-label">Scan</div>
+        </a>
+        <button class="quick-item" onclick="loadAllData()">
+          <div class="quick-icon refresh"><i class="fas fa-sync-alt"></i></div>
+          <div class="quick-label">Refresh</div>
+        </button>
+        <a class="quick-item" id="sheetQuick" href="#" target="_blank">
+          <div class="quick-icon sheet"><i class="fas fa-table"></i></div>
+          <div class="quick-label">Sheet</div>
+        </a>
+        <button class="quick-item" onclick="kirimRekapWA()">
+          <div class="quick-icon wa"><i class="fab fa-whatsapp"></i></div>
+          <div class="quick-label">Rekap</div>
+        </button>
+      </div>
+
+      <!-- QR CODE -->
+      <div class="section-title">
+        <h2>QR Code Presensi</h2>
+        <a onclick="downloadQR()" href="javascript:void(0)"><i class="fas fa-download"></i> Unduh</a>
+      </div>
+      <div class="qr-card">
+        <div class="qr-frame">
+          <div id="qrImage"></div>
+        </div>
+        <div class="qr-badge"><i class="fas fa-check-circle"></i> Scan untuk hadir</div>
+      </div>
+
+      <!-- ACTIVITY -->
+      <div class="section-title">
+        <h2>Aktivitas Terbaru</h2>
+        <a onclick="switchPage('data')" href="javascript:void(0)">Lihat semua <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="activity-card" id="activityCard">
+        <div class="loading"><i class="fas fa-spinner fa-spin"></i> Memuat aktivitas...</div>
+      </div>
+
     </div>
-    <div class="table-wrap">
-      <div class="loading" id="loadingData"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
-      <table id="dataTable" style="display:none">
-        <thead><tr><th>NIM</th><th>Nama</th><th>Kelas</th><th>Status</th></tr></thead>
-        <tbody id="tableBody"></tbody>
-      </table>
+
+    <!-- ============ PAGE: SCAN ============ -->
+    <div class="page" id="page-scan">
+
+      <div class="scan-container">
+        <div id="qr-reader"></div>
+        <div class="scan-overlay">
+          <div class="scan-frame">
+            <div class="corner c-tl"></div>
+            <div class="corner c-tr"></div>
+            <div class="corner c-bl"></div>
+            <div class="corner c-br"></div>
+            <div class="scan-laser"></div>
+          </div>
+          <div class="scan-hint"><i class="fas fa-qrcode"></i> <span id="scanStatusText">Arahkan ke QR Code</span></div>
+        </div>
+      </div>
+
+      <div class="scan-actions">
+        <button class="btn-app primary" id="btnStartScan" onclick="toggleScanner()">
+          <i class="fas fa-play"></i> Mulai Scan
+        </button>
+        <button class="btn-app soft" id="btnFlash" onclick="toggleFlash()">
+          <i class="fas fa-bolt"></i>
+        </button>
+      </div>
+
+      <div class="prog-card" style="margin-top:8px;">
+        <div class="prog-txt">
+          <div class="prog-title">Status Scanner</div>
+          <div class="prog-desc" id="presensiStatus">Menunggu scan...</div>
+        </div>
+      </div>
+
     </div>
+
+    <!-- ============ PAGE: DATA ============ -->
+    <div class="page" id="page-data">
+
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Cari nama atau NIM..." oninput="filterStudents()">
+      </div>
+
+      <div class="section-title" style="margin-top:0;">
+        <h2>Daftar Mahasiswa</h2>
+        <span style="font-size:11px;font-weight:700;color:var(--primary)" id="totalMahasiswa">0</span>
+      </div>
+
+      <div class="student-list" id="studentList">
+        <div class="loading" id="loadingData"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
+      </div>
+
+      <!-- hidden table for legacy -->
+      <table id="dataTable" style="display:none"><tbody id="tableBody"></tbody></table>
+
+    </div>
+
+    <!-- ============ PAGE: PROFILE ============ -->
+    <div class="page" id="page-profile">
+
+      <div class="profile-hero">
+        <div class="profile-avatar"><i class="fas fa-user-graduate"></i></div>
+        <div class="profile-name">Presensi Digital</div>
+        <div class="profile-sub">Sistem Absensi QR Code</div>
+      </div>
+
+      <!-- GENERATE QR -->
+      <div class="gen-box">
+        <h3><i class="fas fa-qrcode"></i> Generate QR Mahasiswa</h3>
+        <div class="gen-input">
+          <input type="text" id="qrNimInput" placeholder="Masukkan NIM" maxlength="20">
+          <button onclick="generateQRCode()"><i class="fas fa-bolt"></i> Buat</button>
+        </div>
+        <div class="qr-preview" id="qrPreview">
+          <div id="qrResultImage" style="display:inline-block"></div>
+          <div id="qrInfo" style="margin-top:10px;font-size:12px;color:var(--text-2);line-height:1.6;font-weight:600"></div>
+          <div class="preview-actions">
+            <button class="btn-dl" onclick="downloadQRCode()"><i class="fas fa-download"></i> Unduh</button>
+            <button class="btn-wa-sm" onclick="shareQRToWA()"><i class="fab fa-whatsapp"></i> WA</button>
+            <button class="btn-close-sm" onclick="closeQRPreview()"><i class="fas fa-times"></i> Tutup</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MENU -->
+      <div class="section-title">
+        <h2>Pengaturan</h2>
+      </div>
+      <div class="menu-list">
+        <a class="menu-item" id="sheetLink" href="#" target="_blank">
+          <div class="menu-icon sheet"><i class="fas fa-table"></i></div>
+          <div class="menu-body">
+            <div class="menu-title">Google Sheets</div>
+            <div class="menu-sub">Buka database presensi</div>
+          </div>
+          <i class="fas fa-chevron-right menu-arrow"></i>
+        </a>
+        <a class="menu-item" onclick="kirimRekapWA()">
+          <div class="menu-icon wa"><i class="fab fa-whatsapp"></i></div>
+          <div class="menu-body">
+            <div class="menu-title">Kirim Rekap WA</div>
+            <div class="menu-sub">Kirim rekap ke WhatsApp</div>
+          </div>
+          <i class="fas fa-chevron-right menu-arrow"></i>
+        </a>
+        <a class="menu-item" onclick="loadAllData()">
+          <div class="menu-icon qr"><i class="fas fa-sync-alt"></i></div>
+          <div class="menu-body">
+            <div class="menu-title">Sinkronkan Data</div>
+            <div class="menu-sub">Ambil data terbaru</div>
+          </div>
+          <i class="fas fa-chevron-right menu-arrow"></i>
+        </a>
+        <a class="menu-item" id="footerSheetLink" href="#" target="_blank">
+          <div class="menu-icon info"><i class="fas fa-info-circle"></i></div>
+          <div class="menu-body">
+            <div class="menu-title">Info Aplikasi</div>
+            <div class="menu-sub">Presensi Digital v3.0</div>
+          </div>
+          <i class="fas fa-chevron-right menu-arrow"></i>
+        </a>
+      </div>
+
+    </div>
+
   </div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <i class="fas fa-bolt" style="color:var(--orange)"></i>
-    Dibuat dengan <i class="fas fa-heart" style="color:var(--pink)"></i>
-    <br>
-    <a id="footerSheetLink" href="#" target="_blank"><i class="fas fa-table"></i> Buka Google Sheets</a>
-    <br>
-    <span style="font-size:10px;opacity:0.6">Status: <span id="presensiStatus">Menunggu scan</span></span>
+  <!-- BOTTOM NAVIGATION -->
+  <div class="bottomnav">
+    <button class="nav-btn active" data-page="home" onclick="switchPage('home')">
+      <i class="fas fa-home"></i>
+      <span>Beranda</span>
+    </button>
+    <button class="nav-btn" data-page="scan" onclick="switchPage('scan')">
+      <i class="fas fa-qrcode"></i>
+      <span>Scan</span>
+    </button>
+    <button class="nav-btn" data-page="data" onclick="switchPage('data')">
+      <i class="fas fa-users"></i>
+      <span>Data</span>
+    </button>
+    <button class="nav-btn" data-page="profile" onclick="switchPage('profile')">
+      <i class="fas fa-user"></i>
+      <span>Profil</span>
+    </button>
   </div>
+
+  <!-- FLOATING WHATSAPP -->
+  <button class="wa-fab" onclick="kirimRekapWA()" title="Kirim rekap WA">
+    <i class="fab fa-whatsapp"></i>
+  </button>
+
+  <!-- TOAST ALERT -->
+  <div class="alert" id="status"></div>
 
 </div>
 
-<!-- FLOATING WA -->
-<button class="wa-fab" onclick="kirimRekapWA()" title="Kirim rekap ke WhatsApp">
-  <i class="fab fa-whatsapp"></i>
-</button>
-
 <script>
-/* ===================================================================
-   KONFIGURASI — GANTI SESUAI KEBUTUHAN
-   =================================================================== */
+/* ================== KONFIGURASI ================== */
 const CONFIG = {
   API_URL: 'https://script.google.com/macros/s/AKfycbwFaiXWeQmp9D1U6YKlNM2u28Dgp8mcnYmzWxoWXH_FS3Po3oWJt1-kknsCZ_yRDranPQ/exec',
   SHEET_URL: 'https://docs.google.com/spreadsheets/d/1PXOSZAXZNg7hvX-33DglZlM3saj4yclUhiYepiFNYhI/edit',
@@ -1031,11 +1305,10 @@ const CONFIG = {
   RESCAN_DELAY_MS: 2500
 };
 
-const DEFAULT_MAHASISWA = [];
-
 const State = {
   scanner: null, scanning: false, flashOn: false, processing: false,
-  mahasiswa: [...DEFAULT_MAHASISWA], presensiHariIni: {}, isOnline: false, currentQRText: ''
+  mahasiswa: [], presensiHariIni: {}, isOnline: false, currentQRText: '',
+  currentPage: 'home'
 };
 
 const $ = id => document.getElementById(id);
@@ -1047,8 +1320,54 @@ const DOM = {
   qrNimInput: $('qrNimInput'), qrResultImage: $('qrResultImage'), qrInfo: $('qrInfo'),
   qrPreview: $('qrPreview'), statTotal: $('statTotal'), statHadir: $('statHadir'),
   statBelum: $('statBelum'), progressRing: $('progressRing'), progressPct: $('progressPct'),
-  progressDesc: $('progressDesc')
+  progressDesc: $('progressDesc'), activityCard: $('activityCard'), studentList: $('studentList'),
+  searchInput: $('searchInput'), pageTitle: $('pageTitle'), pageSubtitle: $('pageSubtitle'),
+  greetTime: $('greetTime')
 };
+
+/* ================== PAGE NAVIGATION ================== */
+const PAGE_INFO = {
+  home: { title: 'Beranda', sub: 'Sistem presensi QR Code' },
+  scan: { title: 'Scan QR', sub: 'Arahkan kamera ke QR Code' },
+  data: { title: 'Data Mahasiswa', sub: 'Daftar kehadiran hari ini' },
+  profile: { title: 'Profil', sub: 'Pengaturan & informasi' }
+};
+
+function switchPage(page) {
+  if (State.currentPage === page) return;
+
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelector(`.nav-btn[data-page="${page}"]`).classList.add('active');
+
+  // Update topbar
+  if (DOM.pageTitle) DOM.pageTitle.textContent = PAGE_INFO[page].title;
+  if (DOM.pageSubtitle) DOM.pageSubtitle.textContent = PAGE_INFO[page].sub;
+
+  // Reset scroll
+  document.querySelector('.content').scrollTop = 0;
+
+  State.currentPage = page;
+
+  // Scanner handling
+  if (page === 'scan' && !State.scanning) {
+    setTimeout(startScanner, 300);
+  } else if (page !== 'scan' && State.scanning) {
+    stopScanner();
+  }
+}
+
+/* ================== GREETING ================== */
+function updateGreeting() {
+  const h = new Date().getHours();
+  let greet = 'Selamat pagi,';
+  if (h >= 11 && h < 15) greet = 'Selamat siang,';
+  else if (h >= 15 && h < 18) greet = 'Selamat sore,';
+  else if (h >= 18 || h < 4) greet = 'Selamat malam,';
+  if (DOM.greetTime) DOM.greetTime.textContent = greet;
+}
 
 /* ================== UTIL ================== */
 function todayStr() {
@@ -1070,23 +1389,23 @@ let statusTimer;
 function showStatus(message, type = 'info', duration = 4000) {
   if (!DOM.status) return;
   const iconMap = { success:'fa-check-circle', error:'fa-times-circle', warning:'fa-exclamation-triangle', info:'fa-info-circle' };
-  DOM.status.innerHTML = `<i class="fas ${iconMap[type]||iconMap.info}"></i> ${message}`;
+  DOM.status.innerHTML = `<i class="fas ${iconMap[type]||iconMap.info}"></i> <span>${message}</span>`;
   DOM.status.className = 'alert ' + type;
-  DOM.status.style.display = 'flex';
+  requestAnimationFrame(() => DOM.status.classList.add('show'));
   clearTimeout(statusTimer);
-  if (duration > 0) statusTimer = setTimeout(() => DOM.status.style.display='none', duration);
+  if (duration > 0) statusTimer = setTimeout(() => DOM.status.classList.remove('show'), duration);
 }
 
 /* ================== CACHE ================== */
 function loadCacheMahasiswa() {
-  try { return JSON.parse(localStorage.getItem('presensi_mhs_v6') || '[]'); } catch { return []; }
+  try { return JSON.parse(localStorage.getItem('presensi_mhs_v7') || '[]'); } catch { return []; }
 }
 function saveCacheMahasiswa(d) {
-  try { localStorage.setItem('presensi_mhs_v6', JSON.stringify(d)); } catch {}
+  try { localStorage.setItem('presensi_mhs_v7', JSON.stringify(d)); } catch {}
 }
 function loadCachePresensi() {
   try {
-    const raw = localStorage.getItem('presensi_hari_v6');
+    const raw = localStorage.getItem('presensi_hari_v7');
     if (!raw) return null;
     const p = JSON.parse(raw);
     if (p.tanggal !== todayStr()) return null;
@@ -1094,7 +1413,7 @@ function loadCachePresensi() {
   } catch { return null; }
 }
 function saveCachePresensi(map) {
-  try { localStorage.setItem('presensi_hari_v6', JSON.stringify({ tanggal: todayStr(), map })); } catch {}
+  try { localStorage.setItem('presensi_hari_v7', JSON.stringify({ tanggal: todayStr(), map })); } catch {}
 }
 
 /* ================== API ================== */
@@ -1116,13 +1435,13 @@ async function apiPost(action, payload = {}) {
 
 /* ================== LOAD DATA ================== */
 async function checkConnection() {
-  setConnectionStatus('checking', 'Mengecek koneksi...');
+  setConnectionStatus('checking', 'Cek koneksi');
   try {
     const json = await apiGet('ping');
-    if (json.success) { setConnectionStatus('online', 'Server online'); return true; }
+    if (json.success) { setConnectionStatus('online', 'Online'); return true; }
     throw new Error('Ping gagal');
   } catch {
-    setConnectionStatus('offline', 'Mode offline');
+    setConnectionStatus('offline', 'Offline');
     return false;
   }
 }
@@ -1132,12 +1451,12 @@ async function loadAllData() {
   if (cachedMhs.length) State.mahasiswa = cachedMhs;
   const cachedPres = loadCachePresensi();
   if (cachedPres) State.presensiHariIni = cachedPres;
-  if (State.mahasiswa.length) renderDataTable();
+  if (State.mahasiswa.length) renderAll();
 
   const online = await checkConnection();
   if (!online) {
     if (!State.mahasiswa.length) showEmptyState('offline');
-    else showStatus('Mode offline - pakai cache', 'warning', 3000);
+    else showStatus('Mode offline — pakai cache', 'warning', 3000);
     return;
   }
 
@@ -1154,20 +1473,23 @@ async function loadAllData() {
       State.presensiHariIni = map;
       saveCachePresensi(map);
     }
-    renderDataTable();
-    showStatus(`${State.mahasiswa.length} mahasiswa - ${Object.keys(State.presensiHariIni).length} hadir`, 'success', 2500);
+    renderAll();
+    showStatus(`${State.mahasiswa.length} mahasiswa · ${Object.keys(State.presensiHariIni).length} hadir`, 'success', 2500);
   } catch (err) {
     console.error(err);
-    if (State.mahasiswa.length) { showStatus('Gagal sync - pakai cache', 'warning', 3000); renderDataTable(); }
+    if (State.mahasiswa.length) { showStatus('Gagal sync — pakai cache', 'warning', 3000); renderAll(); }
     else showEmptyState('error', err.message);
   }
 }
 
 /* ================== RENDER ================== */
-function renderDataTable() {
-  if (!DOM.tableBody) return;
-  DOM.tableBody.innerHTML = '';
+function renderAll() {
+  renderStats();
+  renderStudentList();
+  renderActivity();
+}
 
+function renderStats() {
   const total = State.mahasiswa.length;
   const hadir = Object.keys(State.presensiHariIni).length;
   const belum = total - hadir;
@@ -1179,48 +1501,114 @@ function renderDataTable() {
   if (DOM.totalMahasiswa) DOM.totalMahasiswa.textContent = `${hadir}/${total}`;
 
   if (DOM.progressRing) {
-    const circumference = 2 * Math.PI * 30;
-    DOM.progressRing.style.strokeDasharray = circumference;
-    DOM.progressRing.style.strokeDashoffset = circumference - (pct / 100) * circumference;
+    const c = 2 * Math.PI * 25;
+    DOM.progressRing.style.strokeDasharray = c;
+    DOM.progressRing.style.strokeDashoffset = c - (pct / 100) * c;
   }
   if (DOM.progressPct) DOM.progressPct.textContent = pct + '%';
   if (DOM.progressDesc) DOM.progressDesc.textContent = `${hadir} dari ${total} mahasiswa sudah hadir`;
+}
 
-  if (!State.mahasiswa.length) { showEmptyState('empty'); return; }
+function getInitials(name) {
+  if (!name) return '?';
+  const parts = String(name).trim().split(' ').filter(p => p);
+  if (parts.length === 0) return '?';
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length-1].charAt(0)).toUpperCase();
+}
 
-  State.mahasiswa.forEach(mhs => {
-    const nim = String(mhs.nim || '').trim();
+function renderStudentList(filter = '') {
+  if (!DOM.studentList) return;
+  const f = filter.toLowerCase().trim();
+
+  let list = State.mahasiswa;
+  if (f) {
+    list = list.filter(m =>
+      String(m.nim || '').toLowerCase().includes(f) ||
+      String(m.nama || '').toLowerCase().includes(f)
+    );
+  }
+
+  if (!State.mahasiswa.length) {
+    DOM.studentList.innerHTML = `
+      <div class="empty-state">
+        <span class="icon">📭</span>
+        <strong>Belum ada mahasiswa</strong>
+        <p>Tambahkan di sheet "Mahasiswa"</p>
+        <button onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
+      </div>`;
+    return;
+  }
+
+  if (!list.length) {
+    DOM.studentList.innerHTML = `
+      <div class="empty-state">
+        <span class="icon">🔍</span>
+        <strong>Tidak ditemukan</strong>
+        <p>Coba kata kunci lain</p>
+      </div>`;
+    return;
+  }
+
+  DOM.studentList.innerHTML = list.map(m => {
+    const nim = String(m.nim || '').trim();
     const h = !!State.presensiHariIni[nim];
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${escapeHtml(nim || '-')}</td>
-      <td>${escapeHtml(mhs.nama || '-')}</td>
-      <td>${escapeHtml(mhs.kelas || '-')}</td>
-      <td><span class="status-pill ${h?'hadir':'belum'}"><i class="fas ${h?'fa-check':'fa-circle'}"></i>${h?'HADIR':'BELUM'}</span></td>`;
-    DOM.tableBody.appendChild(tr);
-  });
+    return `
+      <div class="student-item">
+        <div class="stu-avatar ${h?'hadir':''}">${escapeHtml(getInitials(m.nama))}</div>
+        <div class="stu-body">
+          <div class="stu-name">${escapeHtml(m.nama || '-')}</div>
+          <div class="stu-info">${escapeHtml(nim)} · ${escapeHtml(m.kelas || '-')}</div>
+        </div>
+        <span class="act-status ${h?'hadir':'belum'}">${h?'Hadir':'Belum'}</span>
+      </div>`;
+  }).join('');
+}
 
-  DOM.loadingData.style.display = 'none';
-  DOM.dataTable.style.display = 'table';
+function renderActivity() {
+  if (!DOM.activityCard) return;
+  const hadirList = Object.values(State.presensiHariIni).slice(-5).reverse();
+
+  if (!hadirList.length) {
+    DOM.activityCard.innerHTML = `
+      <div class="empty-state" style="padding:24px 20px">
+        <span class="icon">🕐</span>
+        <strong>Belum ada aktivitas</strong>
+        <p>Mulai scan QR untuk memulai</p>
+      </div>`;
+    return;
+  }
+
+  DOM.activityCard.innerHTML = hadirList.map(p => `
+    <div class="activity-item">
+      <div class="act-avatar"><i class="fas fa-check"></i></div>
+      <div class="act-body">
+        <div class="act-name">${escapeHtml(p.nama || '-')}</div>
+        <div class="act-info">${escapeHtml(p.nim || '')} · ${escapeHtml(p.waktu || 'baru saja')}</div>
+      </div>
+      <span class="act-status hadir">Hadir</span>
+    </div>
+  `).join('');
+}
+
+function filterStudents() {
+  const q = DOM.searchInput ? DOM.searchInput.value : '';
+  renderStudentList(q);
 }
 
 function showEmptyState(kind, detail = '') {
-  if (!DOM.loadingData) return;
-  DOM.dataTable.style.display = 'none';
-  DOM.loadingData.style.display = 'block';
+  if (!DOM.studentList) return;
   if (kind === 'offline') {
-    DOM.loadingData.innerHTML = `<i class="fas fa-wifi" style="color:var(--red);font-size:32px;display:block;margin-bottom:10px"></i>MODE OFFLINE<br><br><span style="font-size:11px;opacity:0.6">Tidak ada koneksi internet.</span><br><br><button onclick="loadAllData()" style="padding:10px 22px;background:var(--yellow);border:3px solid var(--black);border-radius:12px;font-weight:800;cursor:pointer;box-shadow:3px 3px 0 var(--black);font-family:inherit;text-transform:uppercase">COBA LAGI</button>`;
-  } else if (kind === 'empty') {
-    DOM.loadingData.innerHTML = `<i class="fas fa-inbox" style="color:var(--orange);font-size:32px;display:block;margin-bottom:10px"></i>BELUM ADA MAHASISWA<br><br><span style="font-size:11px;opacity:0.6">Tambahkan data di sheet "Mahasiswa".</span>`;
-  } else {
-    DOM.loadingData.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:var(--red);font-size:32px;display:block;margin-bottom:10px"></i>GAGAL MEMUAT<br><br><span style="font-size:11px;opacity:0.6">${escapeHtml(detail)}</span><br><br><button onclick="loadAllData()" style="padding:10px 22px;background:var(--yellow);border:3px solid var(--black);border-radius:12px;font-weight:800;cursor:pointer;box-shadow:3px 3px 0 var(--black);font-family:inherit;text-transform:uppercase">COBA LAGI</button>`;
+    DOM.studentList.innerHTML = `<div class="empty-state"><span class="icon">📴</span><strong>Tidak Ada Koneksi</strong><p>Mode offline — tidak ada cache</p><button onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Coba Lagi</button></div>`;
+  } else if (kind === 'error') {
+    DOM.studentList.innerHTML = `<div class="empty-state"><span class="icon">⚠️</span><strong>Gagal Memuat</strong><p>${escapeHtml(detail)}</p><button onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Coba Lagi</button></div>`;
   }
 }
 
 /* ================== QR CODE ================== */
 function buatQRCode(el, text, size = 200) {
   el.innerHTML = '';
-  new QRCode(el, { text, width: size, height: size, colorDark: '#09090b', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+  new QRCode(el, { text, width: size, height: size, colorDark: '#0f172a', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
 }
 
 function generateQR() {
@@ -1233,9 +1621,9 @@ function downloadQR() {
   const canvas = $('qrImage').querySelector('canvas');
   const img = $('qrImage').querySelector('img');
   const dataUrl = canvas ? canvas.toDataURL('image/png') : (img ? img.src : '');
-  if (!dataUrl) { alert('QR Code belum siap.'); return; }
+  if (!dataUrl) { alert('QR belum siap'); return; }
   const a = document.createElement('a');
-  a.download = 'qr-presensi-kelas.png'; a.href = dataUrl;
+  a.download = 'qr-presensi.png'; a.href = dataUrl;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
@@ -1244,18 +1632,18 @@ function generateQRCode() {
   if (!nim) { showStatus('Masukkan NIM dulu!', 'error'); DOM.qrNimInput.focus(); return; }
   if (nim.length < 3) { showStatus('NIM minimal 3 karakter', 'error'); return; }
   const mhs = State.mahasiswa.find(m => String(m.nim).trim() === nim);
-  if (!mhs) { showStatus(`NIM ${escapeHtml(nim)} tidak terdaftar!`, 'error'); return; }
+  if (!mhs) { showStatus(`NIM ${nim} tidak terdaftar!`, 'error'); return; }
   const qrData = { nim: mhs.nim, nama: mhs.nama, kelas: mhs.kelas, jurusan: mhs.jurusan, link_sheet: CONFIG.SHEET_URL, timestamp: new Date().toISOString() };
   State.currentQRText = JSON.stringify(qrData);
   buatQRCode(DOM.qrResultImage, State.currentQRText, 160);
-  DOM.qrInfo.innerHTML = `<strong>${escapeHtml(mhs.nama)}</strong><br>NIM: ${escapeHtml(mhs.nim)}<br>${escapeHtml(mhs.kelas)} - ${escapeHtml(mhs.jurusan)}`;
+  DOM.qrInfo.innerHTML = `<strong>${escapeHtml(mhs.nama)}</strong><br>${escapeHtml(mhs.nim)} · ${escapeHtml(mhs.kelas)}`;
   DOM.qrPreview.classList.add('show');
-  showStatus(`QR dibuat untuk ${escapeHtml(mhs.nama)}`, 'success');
+  showStatus(`QR dibuat untuk ${mhs.nama}`, 'success');
 }
 
 function downloadQRCode() {
   const canvas = DOM.qrResultImage.querySelector('canvas');
-  if (!canvas) { showStatus('Tidak ada QR Code', 'error'); return; }
+  if (!canvas) { showStatus('Tidak ada QR', 'error'); return; }
   const nim = DOM.qrNimInput.value.trim() || 'mahasiswa';
   const a = document.createElement('a');
   a.download = `qr-${nim}.png`; a.href = canvas.toDataURL('image/png');
@@ -1301,8 +1689,9 @@ function startScanner() {
   const readerEl = $('qr-reader');
   if (readerEl) readerEl.innerHTML = '';
   if (DOM.btnStartScan) {
-    DOM.btnStartScan.classList.add('stop');
-    DOM.btnStartScan.innerHTML = '<i class="fas fa-stop"></i> STOP SCAN';
+    DOM.btnStartScan.classList.add('danger');
+    DOM.btnStartScan.classList.remove('primary');
+    DOM.btnStartScan.innerHTML = '<i class="fas fa-stop"></i> Stop Scan';
   }
   try {
     State.scanner = new Html5Qrcode("qr-reader", { verbose: false, formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE] });
@@ -1314,7 +1703,7 @@ function startScanner() {
       .catch(() => {
         State.scanner.start({ facingMode: "user" }, config, onSuccess, onError)
           .then(() => onScannerStarted('Kamera depan aktif'))
-          .catch(err2 => { showStatus('Gagal akses kamera: ' + err2.message, 'error', 0); resetScannerButton(); });
+          .catch(err2 => { showStatus('Gagal akses kamera', 'error', 0); resetScannerButton(); });
       });
   } catch (err) { showStatus('Gagal inisialisasi scanner', 'error', 0); resetScannerButton(); }
 }
@@ -1322,7 +1711,7 @@ function startScanner() {
 function onScannerStarted(msg) {
   State.scanning = true;
   if (DOM.scanStatus) DOM.scanStatus.textContent = 'Mendeteksi QR...';
-  if (DOM.presensiStatus) DOM.presensiStatus.textContent = 'Mendeteksi...';
+  if (DOM.presensiStatus) DOM.presensiStatus.textContent = 'Scanner aktif, menunggu QR...';
   showStatus(msg, 'info', 2000);
 }
 
@@ -1332,14 +1721,16 @@ function stopScanner() {
       try { State.scanner.clear(); } catch {}
       State.scanner = null; State.scanning = false; resetScannerButton();
       if (DOM.scanStatus) DOM.scanStatus.textContent = 'Scanner berhenti';
+      if (DOM.presensiStatus) DOM.presensiStatus.textContent = 'Scanner berhenti';
     }).catch(() => {});
   } else { State.scanning = false; resetScannerButton(); }
 }
 
 function resetScannerButton() {
   if (!DOM.btnStartScan) return;
-  DOM.btnStartScan.classList.remove('stop');
-  DOM.btnStartScan.innerHTML = '<i class="fas fa-play"></i> MULAI SCAN';
+  DOM.btnStartScan.classList.remove('danger');
+  DOM.btnStartScan.classList.add('primary');
+  DOM.btnStartScan.innerHTML = '<i class="fas fa-play"></i> Mulai Scan';
 }
 
 function onScanSuccess(decodedText) {
@@ -1351,6 +1742,7 @@ function onScanSuccess(decodedText) {
   processPresensi(decodedText);
 }
 
+/* ================== PROSES PRESENSI ================== */
 async function processPresensi(qrData) {
   const tanggal = todayStr();
   try {
@@ -1359,9 +1751,9 @@ async function processPresensi(qrData) {
     try { const parsed = JSON.parse(qrData); nim = String(parsed.nim || '').trim(); } catch { nim = String(qrData || '').trim(); }
     if (!nim || nim.length < 3) { showStatus('NIM tidak valid', 'error'); return; }
     const mhs = State.mahasiswa.find(m => String(m.nim).trim() === nim);
-    if (!mhs) { showStatus(`NIM ${escapeHtml(nim)} tidak terdaftar!`, 'error'); return; }
+    if (!mhs) { showStatus(`NIM ${nim} tidak terdaftar!`, 'error'); return; }
     if (State.presensiHariIni[nim]) {
-      showStatus(`${escapeHtml(mhs.nama)} sudah presensi!`, 'warning');
+      showStatus(`${mhs.nama} sudah presensi!`, 'warning');
       if (DOM.scanStatus) DOM.scanStatus.textContent = 'Sudah presensi';
       if (DOM.presensiStatus) DOM.presensiStatus.textContent = 'Sudah hadir';
       return;
@@ -1370,39 +1762,38 @@ async function processPresensi(qrData) {
     let result;
     try { result = await apiPost('presensi', payload); }
     catch (netErr) {
-      State.presensiHariIni[nim] = { nim, tanggal, offline: true, waktu: new Date().toLocaleString('id-ID'), nama: mhs.nama };
-      saveCachePresensi(State.presensiHariIni); renderDataTable();
-      showStatus(`Offline - ${escapeHtml(mhs.nama)} dicatat lokal`, 'warning', 5000);
+      State.presensiHariIni[nim] = { nim, tanggal, offline: true, waktu: new Date().toLocaleTimeString('id-ID'), nama: mhs.nama };
+      saveCachePresensi(State.presensiHariIni); renderAll();
+      showStatus(`Offline — ${mhs.nama} dicatat lokal`, 'warning', 5000);
       if (DOM.scanStatus) DOM.scanStatus.textContent = 'Tersimpan lokal';
       fireConfetti(); return;
     }
     if (result.success) {
-      State.presensiHariIni[nim] = { nim, tanggal, waktu: result.waktu || '', nama: mhs.nama };
-      saveCachePresensi(State.presensiHariIni); renderDataTable();
-      showStatus(`${escapeHtml(mhs.nama)} HADIR!`, 'success', 3500);
+      State.presensiHariIni[nim] = { nim, tanggal, waktu: result.waktu || new Date().toLocaleTimeString('id-ID'), nama: mhs.nama };
+      saveCachePresensi(State.presensiHariIni); renderAll();
+      showStatus(`${mhs.nama} HADIR!`, 'success', 3500);
       if (DOM.scanStatus) DOM.scanStatus.textContent = 'HADIR!';
       if (DOM.presensiStatus) DOM.presensiStatus.textContent = 'Hadir';
       fireConfetti();
     } else if (result.already) {
       State.presensiHariIni[nim] = { nim, tanggal, waktu: result.data?.waktu || '', nama: mhs.nama };
-      saveCachePresensi(State.presensiHariIni); renderDataTable();
-      showStatus(`${escapeHtml(mhs.nama)} sudah presensi`, 'warning', 3500);
-      if (DOM.scanStatus) DOM.scanStatus.textContent = 'Sudah presensi';
+      saveCachePresensi(State.presensiHariIni); renderAll();
+      showStatus(`${mhs.nama} sudah presensi`, 'warning', 3500);
     } else { showStatus(result.error || 'Gagal menyimpan', 'error', 4000); }
   } catch (err) { console.error(err); showStatus('Error: ' + err.message, 'error', 4000); }
   finally {
     setTimeout(() => {
       State.processing = false;
       if (DOM.scanStatus) DOM.scanStatus.textContent = 'Arahkan ke QR Code';
-      if (!State.scanning) startScanner();
+      if (State.currentPage === 'scan' && !State.scanning) startScanner();
     }, CONFIG.RESCAN_DELAY_MS);
   }
 }
 
 function fireConfetti() {
-  confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 }, colors: ['#fde047', '#f472b6', '#67e8f9', '#4ade80', '#fb923c'] });
-  setTimeout(() => confetti({ particleCount: 50, angle: 60, spread: 60, origin: { x: 0 } }), 200);
-  setTimeout(() => confetti({ particleCount: 50, angle: 120, spread: 60, origin: { x: 1 } }), 200);
+  confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 }, colors: ['#4f46e5', '#7c3aed', '#10b981', '#f59e0b', '#ec4899'] });
+  setTimeout(() => confetti({ particleCount: 40, angle: 60, spread: 55, origin: { x: 0 } }), 200);
+  setTimeout(() => confetti({ particleCount: 40, angle: 120, spread: 55, origin: { x: 1 } }), 200);
 }
 
 async function toggleFlash() {
@@ -1421,28 +1812,29 @@ async function toggleFlash() {
 
 async function checkCameraPermission() {
   try {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      showStatus('Browser tidak mendukung kamera', 'error', 0); return false;
-    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return false;
     const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
     stream.getTracks().forEach(t => t.stop());
     return true;
-  } catch { showStatus('Izin kamera diperlukan', 'error', 0); return false; }
+  } catch { return false; }
 }
 
+/* ================== INIT ================== */
 async function init() {
   const sheetLink = CONFIG.SHEET_URL + '#gid=' + CONFIG.SHEET_GID_PRESENSI;
   if ($('sheetLink')) $('sheetLink').href = sheetLink;
   if ($('footerSheetLink')) $('footerSheetLink').href = sheetLink;
+  if ($('sheetQuick')) $('sheetQuick').href = sheetLink;
 
+  updateGreeting();
   generateQR();
   if (DOM.presensiStatus) DOM.presensiStatus.textContent = 'Menunggu scan...';
 
   await loadAllData();
   setInterval(() => loadAllData(), CONFIG.REFRESH_INTERVAL_MS);
 
-  const cameraReady = await checkCameraPermission();
-  if (cameraReady) setTimeout(startScanner, 800);
+  // Cek izin kamera (tapi tidak auto-start; hanya saat buka tab Scan)
+  checkCameraPermission();
 }
 
 document.addEventListener('DOMContentLoaded', init);
